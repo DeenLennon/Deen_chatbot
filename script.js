@@ -1,3 +1,6 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const genAI = new GoogleGenerativeAI('AIzaSyAARZ0ir-9ikS0lCc4fSkD-XQIIiIdifRY');
+
 const chatbotToggler = document.querySelector(".chatbot-toggler");
 const closeBtn = document.querySelector(".close-btn");
 const chatbox = document.querySelector(".chatbox");
@@ -6,6 +9,15 @@ const sendChatBtn = document.querySelector(".chat-input span");
 
 let userMessage = null;
 const inputInitHeight = chatInput.scrollHeight;
+
+async function runModel(prompt) {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = await response.text();
+    return text;
+}
 
 const createChatLi = (message, className) => {
     const chatLi = document.createElement("li");
@@ -16,11 +28,16 @@ const createChatLi = (message, className) => {
     return chatLi;
 }
 
-const generateResponse = (chatElement) => {
+const generateResponse = async (chatElement, userMessage) => {
     const messageElement = chatElement.querySelector("p");
 
-    messageElement.textContent = "The answer is yes";
-
+    try {
+        const answer = await runModel(userMessage);
+        messageElement.textContent = answer;
+    } catch (error) {
+        console.error("Failed to generate response:", error);
+        messageElement.textContent = "Sorry, something went wrong.";
+    }
     chatbox.scrollTo(0, chatbox.scrollHeight);
 }
 
@@ -41,7 +58,7 @@ const handleChat = () => {
         const incomingChatLi = createChatLi("Thinking...", "incoming");
         chatbox.appendChild(incomingChatLi);
         chatbox.scrollTo(0, chatbox.scrollHeight);
-        generateResponse(incomingChatLi);
+        generateResponse(incomingChatLi, userMessage);
     }, 600);
 }
 
