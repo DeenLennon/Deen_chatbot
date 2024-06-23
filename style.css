@@ -10,7 +10,7 @@
 body {
   display: flex;
   height: 100vh;
-  background: #E3F2FD;
+  background: #81ddaf;
   justify-content: center;
   align-items: center;
 }
@@ -28,7 +28,7 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #45f1aa;
+  background: #00220f;
   transition: all 0.2s ease;
 }
 body.show-chatbot .chatbot-toggler {
